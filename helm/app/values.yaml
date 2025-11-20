@@ -1,0 +1,16 @@
+image: lucasscrt/chaotic-backend:latest
+port: 3000
+
+deployment:
+  annotations: {}
+  terminationGracePeriodSeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 1
+
+httpRoutes:
+  liveness: /health/live
+  readiness: /health/ready
+  mockData: /probe/data
