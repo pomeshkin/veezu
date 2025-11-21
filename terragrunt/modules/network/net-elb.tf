@@ -43,8 +43,8 @@ module "alb_ext" {
       port                 = 3000
       deregistration_delay = 0
       target_type          = "ip"
-      vpc_id = module.vpc.vpc_id
-      create_attachment = false
+      vpc_id               = module.vpc.vpc_id
+      create_attachment    = false
       health_check = {
         enabled             = true
         interval            = 5

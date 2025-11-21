@@ -1,0 +1,13 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  # target group cannot be updated with new arn, hence the sha256sum of it is used in name to essentially create a new resource itself
+  name: {{ printf "tgb-%s-app-%s" (lower $.Values.tgb.protocol) ($.Values.tgb.targetGroupArn | sha256sum | trunc 8) }}
+spec:
+  serviceRef:
+    name: {{ .Values.appName }}
+    port: {{ .Values.tgb.port }}
+  targetGroupARN: {{ .Values.tgb.targetGroupArn }}
+  targetGroupProtocol: {{ .Values.tgb.protocol }}
+  targetType: ip
+  multiClusterTargetGroup: true # workaround in case of resource replacement. Also could be used for blue-green cluster switch

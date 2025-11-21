@@ -20,12 +20,18 @@ inputs = merge(
     network_vpc_public_subnets  = local.network_vpc_public_subnets
     network_vpc_private_subnets = local.network_vpc_private_subnets
     #
-    default_tags = local.default_tags
+    default_tags   = local.default_tags
+    terragrunt_dir = get_repo_root()
   },
 )
 
 terraform {
   source = "${path_relative_from_include("root")}/modules//${basename(get_terragrunt_dir())}///"
+
+  // before_hook "print_pwd" {
+  //   commands = ["apply", "plan", "init"]
+  //   execute  = ["bash", "-c", "pwd"]
+  // }
 
   after_hook "terraform_lock" {
     # removing auto-copied .terraform.lock.hcl file
@@ -62,7 +68,7 @@ terraform {
     key            = "terragrunt/${local.source_path}.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    use_lockfile   = true
+    #use_lockfile   = true
   }
 }
 EOF

@@ -1,2 +1,8 @@
-targetGroupArn: ""
-securityGroupId: ""
+appName: chaotic-backend
+
+tgb:
+  targetGroupArn: ""
+  port: 3000
+  protocol: HTTP
+sg:
+  securityGroupId: ""

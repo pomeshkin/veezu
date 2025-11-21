@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+  annotations:
+    # Required for AWS VPC CNI to assign a secondary ENI with custom security group
+    #k8s.v1.cni.cncf.io/networks: aws-cni
+    #k8s.v1.cni.cncf.io/eniConfig: secure-app-eni
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  strategy: {{- toYaml .Values.deployment.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: {{ .Values.appName }}
+                topologyKey: topology.kubernetes.io/zone
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
+
+      containers:
+      - name: {{ .Values.appName }}
+        image: {{ .Values.image }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.port }}
+          name: http-app
+
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+
+        startupProbe:
+          httpGet:
+            path: {{ .Values.httpRoutes.healthcheck }}
+            port: {{ .Values.port }}
+            scheme: HTTP
+          failureThreshold: 20
+          periodSeconds: 3
+
+        livenessProbe:
+          failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
+          httpGet:
+            path: {{ .Values.httpRoutes.liveness }}
+            port: {{ .Values.port }}
+          initialDelaySeconds: {{ $.Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
+          successThreshold: {{ $.Values.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ $.Values.livenessProbe.timeoutSeconds }}
+
+        readinessProbe:
+          failureThreshold: {{ $.Values.readinessProbe.failureThreshold }}
+          httpGet:
+            path: {{ .Values.httpRoutes.readiness }}
+            port: {{ .Values.port }}
+            scheme: HTTP
+          initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
+          successThreshold: {{ $.Values.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ $.Values.readinessProbe.timeoutSeconds }}

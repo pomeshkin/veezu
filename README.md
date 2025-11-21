@@ -17,12 +17,13 @@ This repo contains:
 4. Execute `terragrunt run --all apply`
 
 ## How to access application (AWS ALB)
-[https://prod.veezu.pomeshk.in/](https://prod.veezu.pomeshk.in/)
+- [https://prod.veezu.pomeshk.in/](https://prod.veezu.pomeshk.in/)
+- [https://prod.veezu.pomeshk.in/health/live](https://prod.veezu.pomeshk.in/health/live)
+- [https://prod.veezu.pomeshk.in/health/ready](https://prod.veezu.pomeshk.in/health/ready)
+- [https://prod.veezu.pomeshk.in/probe/data](https://prod.veezu.pomeshk.in/probe/data)
 
 ## Terragrunt structure
 
 ## TODO items
-- Deploy EKS cluster
-- Create helm charts and deploy them using terraform
-- Setup monitoring (Prometheus + Grafana)
+- Setup monitoring and logging
 - Complete documentation

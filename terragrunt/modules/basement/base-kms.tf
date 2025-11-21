@@ -14,6 +14,24 @@ locals {
 
         Resource = "*"
       },
+      {
+        Sid = "AllowEC2AndAutoScalingToUseForEBS"
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey",
+          "kms:CreateGrant",
+        ]
+        Effect = "Allow"
+        Principal = {
+          "Service" : "ec2.amazonaws.com",
+          "AWS" : "arn:aws:iam::${local.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+
+        Resource = "*"
+      },
     ]
     Version = "2012-10-17"
   })

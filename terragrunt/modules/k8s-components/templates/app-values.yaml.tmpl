@@ -1,0 +1,8 @@
+appName: "${appName}"
+deployment:
+  replicas: ${replicas}
+hpa:
+  cpuUtilization: 50
+  memoryUtilization: 50
+  minReplicas: ${replicas}
+  maxReplicas: 6

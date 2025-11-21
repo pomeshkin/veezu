@@ -11,5 +11,4 @@ dependency "basement" {
 
 inputs = {
   network_route53 = dependency.basement.outputs.route53
-  network_iam     = dependency.basement.outputs.iam
 }

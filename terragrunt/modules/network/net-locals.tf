@@ -21,5 +21,5 @@ locals {
   route53                  = var.network_route53
   route53_zone_id_public   = local.route53.zone_id_public
   route53_zone_name_public = local.route53.zone_name_public
-  route53_zone_id_private  = concat(aws_route53_zone.private.*.id, [""])[0]
+  route53_zone_id_private  = try(aws_route53_zone.private[0].id, "")
 }

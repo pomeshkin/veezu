@@ -1,16 +1,52 @@
+appName: chaotic-backend
+
 image: lucasscrt/chaotic-backend:latest
 port: 3000
 
+nodeSelector:
+  node.kubernetes.io/instance-group: application
+
 deployment:
+  replicas: 2
   annotations: {}
-  terminationGracePeriodSeconds: 10
+  terminationGracePeriodSeconds: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 25%
+      maxSurge: 25% # the maximum number of additional pods that can be created during a rolling update
       maxUnavailable: 1
 
 httpRoutes:
+  healthcheck: /
   liveness: /health/live
   readiness: /health/ready
   mockData: /probe/data
+
+podDisruptionBudget:
+  maxUnavailable: 1
+
+hpa:
+  cpuUtilization: 50
+  memoryUtilization: 50
+  minReplicas: 2
+  maxReplicas: 4
+
+resources:
+  requests:
+    cpu: 0.2
+    memory: 256M
+  limits: {}
+
+livenessProbe:
+  failureThreshold: 1
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 2
+
+readinessProbe:
+  failureThreshold: 1
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  successThreshold: 3
+  timeoutSeconds: 2
